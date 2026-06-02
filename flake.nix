@@ -53,19 +53,17 @@
             };
           };
 
-          system.activationScripts.chmodBPF = lib.mkIf cfg.chmodBPF {
-            text = ''
-              echo "wireshark: setting up access_bpf group..."
-              /usr/sbin/dseditgroup -o create -r "BPF device access" access_bpf 2>/dev/null || true
-              ${lib.concatMapStringsSep "\n" (user: ''
-                /usr/sbin/dseditgroup -o edit -a ${user} -t user access_bpf 2>/dev/null || true
-              '') users}
+          system.activationScripts.postActivation.text = lib.mkAfter (lib.optionalString cfg.chmodBPF ''
+            echo "wireshark: setting up access_bpf group..."
+            /usr/sbin/dseditgroup -o create -r "BPF device access" access_bpf 2>/dev/null || true
+            ${lib.concatMapStringsSep "\n" (user: ''
+              /usr/sbin/dseditgroup -o edit -a ${user} -t user access_bpf 2>/dev/null || true
+            '') users}
 
-              echo "wireshark: loading ChmodBPF launchd daemon..."
-              /bin/launchctl bootout system/org.wireshark.ChmodBPF 2>/dev/null || true
-              /bin/launchctl bootstrap system /Library/LaunchDaemons/org.wireshark.ChmodBPF.plist
-            '';
-          };
+            echo "wireshark: loading ChmodBPF launchd daemon..."
+            /bin/launchctl unload /Library/LaunchDaemons/org.wireshark.ChmodBPF.plist 2>/dev/null || true
+            /bin/launchctl load -w /Library/LaunchDaemons/org.wireshark.ChmodBPF.plist
+          '');
 
         };
       };
