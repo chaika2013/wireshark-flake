@@ -49,7 +49,7 @@
             serviceConfig = {
               Label = "org.wireshark.ChmodBPF";
               RunAtLoad = true;
-              Program = "${chmodBPFScript}";
+              ProgramArguments = [ "/bin/sh" "-c" "/bin/wait4path /nix/store && exec ${chmodBPFScript}" ];
             };
           };
 
