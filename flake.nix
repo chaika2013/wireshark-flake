@@ -60,6 +60,10 @@
               ${lib.concatMapStringsSep "\n" (user: ''
                 /usr/sbin/dseditgroup -o edit -a ${user} -t user access_bpf 2>/dev/null || true
               '') users}
+
+              echo "wireshark: loading ChmodBPF launchd daemon..."
+              /bin/launchctl bootout system/org.wireshark.ChmodBPF 2>/dev/null || true
+              /bin/launchctl bootstrap system /Library/LaunchDaemons/org.wireshark.ChmodBPF.plist
             '';
           };
 
