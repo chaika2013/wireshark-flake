@@ -17,7 +17,6 @@ Add the flake as an input in your `flake.nix`:
     wireshark = {
       url = "github:chaika2013/wireshark-flake";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.nix-darwin.follows = "nix-darwin";
     };
   };
 
