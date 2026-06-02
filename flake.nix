@@ -55,7 +55,7 @@
 
           system.activationScripts.postActivation.text = lib.mkAfter (lib.optionalString cfg.chmodBPF ''
             echo "wireshark: setting up access_bpf group..."
-            /usr/sbin/dseditgroup -o read access_bpf 2>/dev/null || \
+            /usr/sbin/dseditgroup -o read access_bpf >/dev/null 2>&1 || \
               /usr/sbin/dseditgroup -o create -r "BPF device access" access_bpf 2>/dev/null || true
             ${lib.concatMapStringsSep "\n" (user: ''
               /usr/sbin/dseditgroup -o edit -a ${user} -t user access_bpf 2>/dev/null || true
